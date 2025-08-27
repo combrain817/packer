@@ -1,0 +1,75 @@
+
+graph TB
+    subgraph "CLI Layer"
+        CLI[main.go<br/>CLI Entry Point]
+        CMD[command/*<br/>Command Handlers]
+    end
+
+    subgraph "Template Processing"
+        HCL[hcl2template/*<br/>HCL2 Parser]
+        CFG[PackerConfig<br/>Parsed Configuration]
+    end
+
+    subgraph "Core Engine"
+        CORE[packer/core.go<br/>Execution Core]
+        BUILD[packer/build.go<br/>Build Orchestration]
+    end
+
+    subgraph "Plugin System"
+        PM[Plugin Manager]
+        RPC[RPC Client/Server]
+    end
+
+    subgraph "Components"
+        subgraph "Builders"
+            B1[null]
+            B2[file]
+            B3[External Plugins]
+        end
+
+        subgraph "Provisioners"
+            P1[shell]
+            P2[file]
+            P3[powershell]
+        end
+
+        subgraph "Post-Processors"
+            PP1[compress]
+            PP2[checksum]
+            PP3[manifest]
+        end
+
+        subgraph "Data Sources"
+            DS1[http]
+            DS2[hcp-packer]
+        end
+    end
+
+    subgraph "External Services"
+        HCP[HCP Registry]
+        CLOUD[Cloud APIs<br/>AWS/GCP/Azure]
+    end
+
+    CLI --> CMD
+    CMD --> HCL
+    HCL --> CFG
+    CFG --> CORE
+    CORE --> BUILD
+    BUILD --> PM
+    PM --> RPC
+
+    RPC --> B1
+    RPC --> B2
+    RPC --> B3
+    RPC --> P1
+    RPC --> P2
+    RPC --> P3
+    RPC --> PP1
+    RPC --> PP2
+    RPC --> PP3
+    RPC --> DS1
+    RPC --> DS2
+
+    B3 --> CLOUD
+    DS2 --> HCP
+    BUILD --> HCP

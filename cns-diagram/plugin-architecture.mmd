@@ -1,0 +1,57 @@
+graph TB
+    subgraph "Packer Core Process"
+        CORE[Core Engine]
+        PM[Plugin Manager]
+        CLIENT[RPC Client]
+    end
+
+    subgraph "Plugin Discovery"
+        SEARCH[Plugin Search]
+        DIRS[Search Directories]
+        LOAD[Plugin Loader]
+    end
+
+    subgraph "Plugin Processes"
+        subgraph "Builder Plugin"
+            BP[Builder Process]
+            BSERVER[RPC Server]
+            BIMPL[Builder Implementation]
+        end
+
+        subgraph "Provisioner Plugin"
+            PP[Provisioner Process]
+            PSERVER[RPC Server]
+            PIMPL[Provisioner Implementation]
+        end
+    end
+
+    subgraph "Communication Layer"
+        SOCK[Unix Socket/<br/>Named Pipe]
+        PROTO[Protocol Buffers]
+    end
+
+    CORE --> PM
+    PM --> SEARCH
+    SEARCH --> DIRS
+    DIRS --> |~/.packer.d/plugins| LOAD
+    DIRS --> |./packer_cache| LOAD
+    DIRS --> |built-in| LOAD
+
+    LOAD --> |exec| BP
+    LOAD --> |exec| PP
+
+    CLIENT <--> SOCK
+    SOCK <--> BSERVER
+    SOCK <--> PSERVER
+
+    BSERVER --> BIMPL
+    PSERVER --> PIMPL
+
+    CLIENT --> |Prepare()| PROTO
+    CLIENT --> |Run()| PROTO
+    CLIENT --> |Cancel()| PROTO
+
+    style CORE fill:#f9f,stroke:#333,stroke-width:2px
+    style SOCK fill:#9ff,stroke:#333,stroke-width:2px
+    style BP fill:#ff9,stroke:#333,stroke-width:2px
+    style PP fill:#ff9,stroke:#333,stroke-width:2px

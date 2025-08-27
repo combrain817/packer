@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant User
+    participant CLI
+    participant Parser
+    participant Core
+    participant Builder
+    participant Provisioner
+    participant PostProcessor
+
+    User->>CLI: packer build template.pkr.hcl
+    CLI->>Parser: Parse HCL template
+    Parser->>Core: PackerConfig
+    Core->>Core: Validate config
+    Core->>Builder: Prepare()
+    Core->>Builder: Run()
+    Builder->>Builder: Create instance/container
+    Builder->>Core: Return Artifact
+    Core->>Provisioner: Provision()
+    Provisioner->>Provisioner: Configure instance
+    Core->>PostProcessor: PostProcess()
+    PostProcessor->>User: Final artifact

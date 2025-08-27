@@ -1,0 +1,44 @@
+classDiagram
+    class Builder {
+        <<interface>>
+        +Prepare() error
+        +Run() (Artifact, error)
+    }
+
+    class Provisioner {
+        <<interface>>
+        +Prepare() error
+        +Provision() error
+    }
+
+    class PostProcessor {
+        <<interface>>
+        +Configure() error
+        +PostProcess() (Artifact, error)
+    }
+
+    class Artifact {
+        <<interface>>
+        +BuilderId() string
+        +Files() []string
+        +Id() string
+        +String() string
+        +Destroy() error
+    }
+
+    class Hook {
+        <<interface>>
+        +Run() error
+        +Cancel()
+    }
+
+    class Communicator {
+        <<interface>>
+        +Start() error
+        +Upload() error
+        +Download() error
+    }
+
+    Builder --> Artifact : creates
+    PostProcessor --> Artifact : transforms
+    Provisioner --> Communicator : uses

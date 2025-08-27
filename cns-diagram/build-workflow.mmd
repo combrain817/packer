@@ -1,0 +1,24 @@
+flowchart LR
+    subgraph "Build Workflow"
+        T[Template<br/>.pkr.hcl] --> P[Parse]
+        P --> V[Validate]
+        V --> I[Initialize]
+        I --> B[Build]
+    end
+
+    subgraph "Build Execution"
+        B --> BLD[Builder.Run]
+        BLD --> ART[Create Artifact]
+        ART --> PRV[Provisioners]
+        PRV --> PP[Post-Processors]
+        PP --> OUT[Output]
+    end
+
+    subgraph "Plugin Communication"
+        CORE[Core Process]
+        PLG1[Plugin Process 1]
+        PLG2[Plugin Process 2]
+        
+        CORE <-->|RPC over Unix Socket| PLG1
+        CORE <-->|RPC over Unix Socket| PLG2
+    end

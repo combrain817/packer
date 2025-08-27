@@ -1,0 +1,54 @@
+graph TD
+    subgraph "Root Directory"
+        ROOT[packer/]
+    end
+
+    subgraph "Entry Points"
+        ROOT --> MAIN[main.go<br/>Program Entry]
+        ROOT --> CMDS[commands.go<br/>CLI Registration]
+        ROOT --> CFG[config.go<br/>Global Config]
+    end
+
+    subgraph "Core Packages"
+        ROOT --> CMD[command/<br/>CLI Commands]
+        ROOT --> HCL2[hcl2template/<br/>Template Parser]
+        ROOT --> PCK[packer/<br/>Core Engine]
+        ROOT --> INT[internal/<br/>Internal Packages]
+    end
+
+    subgraph "Components"
+        ROOT --> BLD[builder/<br/>Built-in Builders]
+        ROOT --> PRV[provisioner/<br/>Built-in Provisioners]
+        ROOT --> PP[post-processor/<br/>Built-in Post-processors]
+        ROOT --> DS[datasource/<br/>Data Sources]
+    end
+
+    subgraph "Supporting"
+        ROOT --> TEST[acctest/<br/>Acceptance Tests]
+        ROOT --> FIX[fix/<br/>Template Fixers]
+        ROOT --> VER[version/<br/>Version Info]
+        ROOT --> WEB[website/<br/>Documentation]
+    end
+
+    CMD --> |implements| BCMD[build.go]
+    CMD --> |implements| VCMD[validate.go]
+    CMD --> |implements| FCMD[fmt.go]
+    CMD --> |implements| ICMD[init.go]
+
+    HCL2 --> |parses| TPCK[types.packer_config.go]
+    HCL2 --> |parses| TBLD[types.build.go]
+    HCL2 --> |parses| TSRC[types.source.go]
+
+    PCK --> |core| CORE[core.go]
+    PCK --> |orchestrates| BUILD[build.go]
+    PCK --> |manages| PLUGIN[plugin*.go]
+
+    BLD --> NULL[null/]
+    BLD --> FILE[file/]
+
+    PRV --> SHELL[shell/]
+    PRV --> FPRV[file/]
+    PRV --> PS[powershell/]
+
+    INT --> HCP[hcp/<br/>HCP Registry]
+    INT --> DAG[dag/<br/>Graph Utils]
